@@ -1,8 +1,6 @@
-![Docker Image CI](https://github.com/Big-Omega-3444/Resturant-Mangement/workflows/Docker%20Image%20CI/badge.svg?branch=master)
-
 # Resturant-Mangement
 
-This is a POS software
+This is a POS software built using Docker
 
 # In order to set this up for your enviroment:
 
