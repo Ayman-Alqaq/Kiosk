@@ -1,0 +1,1422 @@
+﻿<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="description" content="CSCE 3444 Project">
+	<title>Management</title>
+	<!-- Bootstrap core CSS -->
+	<link href="{{ url_for('static', filename='bootstrap/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+	<!-- Collapse Menu -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<!-- Custom icons for section cards -->
+	<script src="https://kit.fontawesome.com/acaa606056.js"></script>
+	<!-- Custom Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+	<!-- Custom styles for this template -->
+	<link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+	<!-- Custom Javascript Functions -->
+	<script src="{{ url_for('static', filename='javascript/jsFunctions.js') }}"></script>
+	<!-- Rotating Card Function -->
+	<link href=" {{ url_for('static', filename='css/rotating-card.css') }}" rel="stylesheet">
+	<!--Charts.js javascript-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+</head>
+
+<body>
+	<nav class="navbar navbar-light bg-light static-top">
+		<div class="container">
+			<div class="row">
+				<div class="col-9"><a class="navbar-brand" href="javascript:void(0);">Management Main Menu</a></div>
+			</div>
+			<div class="row">
+				<div class="w-100"></div>
+				<div class="col"><a id="time"></a></div>
+				<div class="w-100"></div>
+				<div class="col"><a id="date"></a></div>
+			</div>
+		</div>
+	</nav>
+	
+	<!-- Begin ALERTS -->
+	<section class="bg-light">
+		<div id="MGMT_Alerts" class="position-absolute" style="margin-left: auto; margin-right: auto; left: 0; right: 0;">	<!-- This gets injected via Javascript -->
+		</div>
+	</section>	
+	<!-- End ALERTS -->
+
+	<section class="features-icons bg-light text-center">
+			<div class="col-sm h-75 text-center text-lg-center my-auto">
+				<ul class="list-inline mb-0">
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#MGMT_Employees"><i class="fas fa-address-book"></i> Manage Employees</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#MGMT_Reports"><i class="fas fa-book"></i> Reports</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#MGMT_Menu"><i class="fas fa-bars"></i> Modify Menu</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" onclick="javascript:window.location='kitchen'" data-target="#MGMT_Kitchen"><i class="fas fa-utensils"></i> View Kitchen</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#MGMT_Inventory"><i class="fas fa-warehouse"></i> Manage Inventory</a></li>
+					<li class="list-inline-item"><a href="" data-dismiss="modal" onclick="javascript:window.location='TableMap'"type="button" class="btn btn-primary" ><i class="fas fa-border-all"></i> View Tables</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#MGMT_Tables"><i class="fas fa-ticket-alt"></i> Manage Coupons and Specials</a></li>
+					<li class="list-inline-item"><a type="button" class="btn btn-primary text-white" data-toggle="modal" data-target="#Logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+				</ul>
+			</div>
+	</section>
+	
+	<!-- Begin REPORTS PAGE -->
+	<div id="MGMT_Reports" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Reports</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#Sales">Sales Chart</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#Order">Order History</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#Track">Track Employee Hours</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#Messages">Messages</a>
+						</li>						
+					</ul>
+				</div>
+				<br>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="tab-content">
+							<div class="tab-pane container active" id="Sales">
+								<div class="container-fluid">
+									<canvas id="myChart"></canvas>
+								</div>
+								<div class="container">
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" id="chartDay" value="Day" name="optradio">Day
+										</label>
+									</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" id="chartWeek" value="Week" name="optradio">Week
+										</label>
+									</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" id="chartMonth" value="Month" name="optradio">Month
+										</label>
+									</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" id="chartYear" value="Year" name="optradio">Year
+										</label>
+									</div>
+									<div class="form-check-inline">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input" id="chartDecade" value="Decade" name="optradio">Decade
+										</label>
+									</div>
+								</div>
+								<div>
+									<br />
+                                    <div>Total Tips For This Time Period:</div>
+									<div id="total_tips">
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane container fade" id="Order">
+								<table class="table table-bordered table-striped table-responsive" id="KTCH_OrderHistoryTable">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Items</th>
+											<th>Date</th>
+											<th>Cost</th>
+											<th>Gratuity</th>
+											<th>Compensated</th>
+										</tr>
+									</thead>
+									<tbody id="KTCH_OrderHistoryTable_Body">
+									</tbody>
+								</table>	
+							</div>
+							<div class="tab-pane container fade" id="Track">
+								<table class="table table-bordered table-striped table-responsive" id="KTCH_TimeTable">
+									<thead>
+										<tr>
+											<th>Employee</th>
+											<th>First</th>
+											<th>Last</th>
+											<th>Total Hours</th>
+										</tr>
+									</thead>
+									<tbody id="KTCH_TimeTable_Body">
+									</tbody>
+								</table>
+							</div>
+							<div class="tab-pane container fade" id="Messages">
+								<table class="table table-bordered table-striped table-responsive" id="MGMT_MessagesTable">
+									<thead>
+                                        <tr>
+                                            <th style="width:5px">Name</th>
+                                            <th>Email</th>
+                                            <th>Answer 1</th>
+                                            <th>Answer 2</th>
+                                            <th>Answer 3</th>
+                                            <th>Rating</th>
+                                            <th style="width:100px">Message</th>
+                                            <th>Manage</th>
+                                        </tr>
+									</thead>
+									<tbody id="MGMT_MessagesTable_Body">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End REPORTS PAGE 	-->
+
+	<!-- Begin EMPLOYEES PAGE -->
+	<div id="MGMT_Employees" class="modal fade" data-backdrop="static" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1049">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Employees</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-header">
+					<input class="form-control" id="MGMT_Employees_Search" type="text" placeholder="Search..">
+				</div>
+				<div class="modal-body">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+						<th>Name</th>
+						<th width="10px">Assignment</th>
+						<th width="10px">Edit</th>
+						</tr>
+					</thead>
+					<tbody id="EmployeesTable">
+					</tbody>
+				</table>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-toggle="modal" href="#MGMT_AddEmployee">Add Employee</a>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End EMPLOYEES PAGE -->
+
+	<!-- Begin ADD EMPLOYEE PAGE -->
+	<div id="MGMT_AddEmployee" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1054">>
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Employee</h5>
+				</div>
+				<div class="modal-body">
+					<div class="Acontainer">
+						<form id="addEmployee">
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="firstnameTxtBox" name="firstname" placeholder="First name" required>
+								</div>
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="lastnameTxtBox" name="lastname" placeholder="Last name" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_streetTxtBox" name="address_street" placeholder="Address">
+								</div>
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_numberTxtBox" name="address_number" placeholder="Apartment, studio, or floor">
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_cityTxtBox" name="address_city" placeholder="City">
+								</div>
+								<div class="form-group col-md-2 mb-3">
+									<select class="form-control" id="address_stateDropDown" name="address_state">
+										<option selected>State</option>
+										<option value="AL">Alabama</option>
+										<option value="AK">Alaska</option>
+										<option value="AZ">Arizona</option>
+										<option value="AR">Arkansas</option>
+										<option value="CA">California</option>
+										<option value="CO">Colorado</option>
+										<option value="CT">Connecticut</option>
+										<option value="DE">Delaware</option>
+										<option value="DC">District Of Columbia</option>
+										<option value="FL">Florida</option>
+										<option value="GA">Georgia</option>
+										<option value="HI">Hawaii</option>
+										<option value="ID">Idaho</option>
+										<option value="IL">Illinois</option>
+										<option value="IN">Indiana</option>
+										<option value="IA">Iowa</option>
+										<option value="KS">Kansas</option>
+										<option value="KY">Kentucky</option>
+										<option value="LA">Louisiana</option>
+										<option value="ME">Maine</option>
+										<option value="MD">Maryland</option>
+										<option value="MA">Massachusetts</option>
+										<option value="MI">Michigan</option>
+										<option value="MN">Minnesota</option>
+										<option value="MS">Mississippi</option>
+										<option value="MO">Missouri</option>
+										<option value="MT">Montana</option>
+										<option value="NE">Nebraska</option>
+										<option value="NV">Nevada</option>
+										<option value="NH">New Hampshire</option>
+										<option value="NJ">New Jersey</option>
+										<option value="NM">New Mexico</option>
+										<option value="NY">New York</option>
+										<option value="NC">North Carolina</option>
+										<option value="ND">North Dakota</option>
+										<option value="OH">Ohio</option>
+										<option value="OK">Oklahoma</option>
+										<option value="OR">Oregon</option>
+										<option value="PA">Pennsylvania</option>
+										<option value="RI">Rhode Island</option>
+										<option value="SC">South Carolina</option>
+										<option value="SD">South Dakota</option>
+										<option value="TN">Tennessee</option>
+										<option value="TX" selected="selected">Texas</option>
+										<option value="UT">Utah</option>
+										<option value="VT">Vermont</option>
+										<option value="VA">Virginia</option>
+										<option value="WA">Washington</option>
+										<option value="WV">West Virginia</option>
+										<option value="WI">Wisconsin</option>
+										<option value="WY">Wyoming</option>
+									</select>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="address_zipTxtBox" name="address_zip" placeholder="Zip Code" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-2">
+									<input id="telNo" type="tel" class="form-control" id="phone_numberTxtBox" name="phone_number" placeholder="(XXX)XXX-XXXX" pattern="^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$" required>
+								</div>
+								<div class="form-group col-md-3 mb-3">
+									<input type="email" class="form-control" id="emailTxtBox" name="email" placeholder="student@my.unt.edu" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" minlength="6" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-2 mb-3">
+									<select class="form-control" id="assignmentDropDown" name="assignment" required>
+										<option selected>Assignment</option>
+										<option value="manager">Manager</option>
+										<option value="waitstaff">Waitstaff</option>
+										<option value="kitchen">Kitchen</option>
+									</select>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="usernameTxtBox" name="username" placeholder="User Name" required>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="pinTxtBox" name="pin" placeholder="PIN" required>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_AddEmployee_btnSaveChanges" data-toggle="modal" data-target="#MGMT_AddEmployee">Submit</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_AddEmployee">Exit without Saving</button>
+                </div>
+			</div>
+		</div>
+	</div>
+	<!-- End ADD EMPLOYEE Page -->
+
+	<!-- Begin EDIT EMPLOYEE PAGE -->
+	<div id="MGMT_EditEmployee" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1054">>
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Modify Employee Information</h5>
+				</div>
+				<div class="modal-body">
+					<div class="Acontainer">
+						<form id="editEmployee">
+							<input type="hidden" id="userID" name="uid">
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="firstnameTxtBox" name="firstname" placeholder="First name" required>
+								</div>
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="lastnameTxtBox" name="lastname" placeholder="Last name" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_streetTxtBox" name="address_street" placeholder="Address">
+								</div>
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_numberTxtBox" name="address_number" placeholder="Apartment, studio, or floor">
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" id="address_cityTxtBox" name="address_city" placeholder="City">
+								</div>
+								<div class="form-group col-md-2 mb-3">
+									<select class="form-control" id="address_stateDropDown" name="address_state">
+										<option selected>State</option>
+										<option value="AL">Alabama</option>
+										<option value="AK">Alaska</option>
+										<option value="AZ">Arizona</option>
+										<option value="AR">Arkansas</option>
+										<option value="CA">California</option>
+										<option value="CO">Colorado</option>
+										<option value="CT">Connecticut</option>
+										<option value="DE">Delaware</option>
+										<option value="DC">District Of Columbia</option>
+										<option value="FL">Florida</option>
+										<option value="GA">Georgia</option>
+										<option value="HI">Hawaii</option>
+										<option value="ID">Idaho</option>
+										<option value="IL">Illinois</option>
+										<option value="IN">Indiana</option>
+										<option value="IA">Iowa</option>
+										<option value="KS">Kansas</option>
+										<option value="KY">Kentucky</option>
+										<option value="LA">Louisiana</option>
+										<option value="ME">Maine</option>
+										<option value="MD">Maryland</option>
+										<option value="MA">Massachusetts</option>
+										<option value="MI">Michigan</option>
+										<option value="MN">Minnesota</option>
+										<option value="MS">Mississippi</option>
+										<option value="MO">Missouri</option>
+										<option value="MT">Montana</option>
+										<option value="NE">Nebraska</option>
+										<option value="NV">Nevada</option>
+										<option value="NH">New Hampshire</option>
+										<option value="NJ">New Jersey</option>
+										<option value="NM">New Mexico</option>
+										<option value="NY">New York</option>
+										<option value="NC">North Carolina</option>
+										<option value="ND">North Dakota</option>
+										<option value="OH">Ohio</option>
+										<option value="OK">Oklahoma</option>
+										<option value="OR">Oregon</option>
+										<option value="PA">Pennsylvania</option>
+										<option value="RI">Rhode Island</option>
+										<option value="SC">South Carolina</option>
+										<option value="SD">South Dakota</option>
+										<option value="TN">Tennessee</option>
+										<option value="TX" selected="selected">Texas</option>
+										<option value="UT">Utah</option>
+										<option value="VT">Vermont</option>
+										<option value="VA">Virginia</option>
+										<option value="WA">Washington</option>
+										<option value="WV">West Virginia</option>
+										<option value="WI">Wisconsin</option>
+										<option value="WY">Wyoming</option>
+									</select>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="address_zipTxtBox" name="address_zip" placeholder="Zip Code" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-2">
+									<input type="tel" class="form-control" id="phone_numberTxtBox" name="phone_number" placeholder="(XXX)XXX-XXXX" pattern="^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$" required>
+								</div>
+								<div class="form-group col-md-3 mb-3">
+									<input type="email" class="form-control" id="emailTxtBox" name="email" placeholder="student@my.unt.edu" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" minlength="6" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-2 mb-3">
+									<select class="form-control" id="assignmentDropDown" name="assignment" required>
+										<option selected>Assignment</option>
+										<option value="manager">Manager</option>
+										<option value="waitstaff">Waitstaff</option>
+										<option value="kitchen">Kitchen</option>
+									</select>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="usernameTxtBox" name="username" placeholder="User Name" required>
+								</div>
+								<div class="form-group col-md-2">
+									<input type="text" class="form-control" id="pinTxtBox" name="pin" placeholder="PIN" required>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_EditEmployee_btnSaveChanges" data-toggle="modal" data-target="#MGMT_EditEmployee">Save Changes</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_EditEmployee">Exit without Saving</button>
+                </div>
+			</div>
+		</div>
+	</div>
+	<!-- End EDIT EMPLOYEE Page -->
+
+	<!-- Begin MENU PAGE -->
+	<div id="MGMT_Menu" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Menu Management</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" href="#MGMT_MenuCategory_Landing" role="tab" data-toggle="tab" aria-controls="category" aria-selected="true">Category</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#MGMT_MenuItems_Landing" role="tab" data-toggle="tab" aria-controls="items" aria-selected="false">Items</a>
+						</li>						
+					</ul>
+				</div>
+				<br>
+				<div class="modal-body">
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane fade show active" id="MGMT_MenuCategory_Landing" aria-labelledby="category-tab">
+							<table class="table table-bordered table-striped" id="MenuCategoryTable">
+								<thead>
+									<tr>
+									<th>Name</th>
+									<th>Menu Items</th>
+									<th>Edit</th>
+									</tr>
+								</thead>
+								<tbody id="MenuCategoryTable_Body">
+								</tbody>
+							</table>	
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id="MGMT_Menu_btnAddMenuCategory" data-toggle="modal" data-target="#MGMT_AddMenuCategory">Add Menu Category</button>
+								<button type="button" class="btn btn-secondary" id="MGMT_Menu_btnSaveChanges1" data-toggle="modal" data-target="#MGMT_Menu">Save and Close</button>
+							</div>							
+						</div>
+						<div class="tab-pane fade" id="MGMT_MenuItems_Landing" aria-labelledby="menuitem-tab">
+							<table class="table table-bordered table-striped" id="MGMT_MenuItemsTable">
+								<thead>
+									<tr>
+									<th>Name</th>
+									<th>Cost</th>
+									<th>Group</th>
+									<th>Edit</th>
+									</tr>
+								</thead>
+								<tbody id="MGMT_MenuItemsTable_Body">
+								</tbody>
+							</table>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id="MGMT_Menu_btnAddMenuItem" data-toggle="modal" data-target="#MGMT_AddMenuItem">Add Menu Item</button>
+								<button type="button" class="btn btn-secondary" id="MGMT_Menu_btnSaveChanges2" data-toggle="modal" data-target="#MGMT_Menu">Save and Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End MENU PAGE -->	
+	
+	<!-- Begin ADD MENU CATEGORY PAGE -->
+	<div id="MGMT_AddMenuCategory" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Menu Category</h5>
+				</div>
+				<div class="modal-body">
+					<form id="addMenuCategoryForm">
+						<div class="form-group">
+							<input type="text" class="form-control" id="MC_ADD_name" name="name" placeholder="Name" required>
+						</div>
+						<div class="form-group">
+							<textarea class="form-control" id="MC_ADD_desc" name="description" placeholder="Add a description here..." rows="5"></textarea>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="MC_ADD_imageURL" name="image" placeholder="Image URL" required>
+						</div>
+						<div class="form-group">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="MC_ADD_checkDrinks" name="drinks" value="true" required>
+								<label class="col-md-1 checkbox-inline" for="MC_ADD_checkDrinks">
+									Drink?
+								</label>
+							</div>
+						</div>
+                        <div class="container">
+                            <b>Enter Time For Start and End Ex:</b> 12:05 AM 
+                            <br />
+							<br />
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <input type="time" id="MC_ADD_startTime" name="startTime" min="00:00" max="23:59" required>
+                                    <label class="col-md-1 checkbox-inline" for="MC_ADD_startTime">
+                                        Start Time
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <input type="time" id="MC_ADD_endTime" name="endTime" min="00:00" max="23:59" required>
+                                    <label class="col-md-1 checkbox-inline" for="MC_ADD_endTime">
+                                        End Time
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Sun" name="sunday" value="Su" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Sun">
+                                        SU
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Mon" name="monday" value="M" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Mon">
+                                        M
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Tue" name="tuesday" value="Tu" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Tue">
+                                        TU
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Wed" name="wednesday" value="W" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Wed">
+                                        W
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Thu" name="thursday" value="Th" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Thu">
+                                        TH
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Fri" name="friday" value="F" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Fri">
+                                        F
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <input type="checkbox" class="form-check-input" id="MC_ADD_Day_Sat" name="saturday" value="Sa" required>
+                                    <label class="checkbox" for="MC_ADD_Day_Sat">
+                                        SA
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+					</form>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_AddMenuCategory_btnSaveChanges" data-toggle="modal" data-target="#MGMT_AddMenuCategory">Submit</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_AddMenuCategory">Exit without Saving</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End MENU PAGE -->
+
+	<!-- Begin ADD MENU CATEGORY PAGE -->
+	<div id="MGMT_EditMenuCategory" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Menu Category</h5>
+				</div>
+				<div class="modal-body">
+					<form id="editMenuCategoryForm">
+						<input type="hidden" id="mcID" name="uid">
+						<div class="form-group">
+							<input type="text" class="form-control" id="MC_name" name="name" placeholder="Name" required>
+						</div>
+						<div class="form-group">
+							<textarea class="form-control" id="MC_desc" name="description" placeholder="Add a description here..." rows="5"></textarea>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="MC_imageURL" name="image" placeholder="Image URL" required>
+						</div>
+						<div class="form-group">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="checkDrinks" name="drinks" value="true" required>
+							  <label class="form-check-label" for="checkDrinks">
+								Drink?
+							  </label>
+							</div>
+						</div>
+						<div class="container">
+							<b>Enter Time For Start and End Ex:</b> 12:05 AM
+							<br />
+							<br />
+							<div class="form-row">
+								<div class="form-group col-md-3">
+									<input type="time" id="MC_EDIT_startTime" name="startTime" min="00:00" max="23:59" required>
+									<label class="col-md-1 checkbox-inline" for="MC_EDIT_startTime">
+									Start Time
+									</label>
+								</div>
+								<div class="form-group col-md-3">
+									<input type="time" id="MC_EDIT_endTime" name="endTime" min="00:00" max="23:59" required>
+									<label class="col-md-1 checkbox-inline" for="MC_EDIT_endTime">
+									End Time
+									</label>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Sun" name="sunday" value="Su" required>
+									<label class="checkbox" for="MC_EDIT_Day_Sun">
+										SU
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Mon" name="monday" value="M" required>
+									<label class="checkbox" for="MC_EDIT_Day_Mon">
+										M
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Tue" name="tuesday" value="Tu" required>
+									<label class="checkbox" for="MC_EDIT_Day_Tue">
+										TU
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Wed" name="wednesday" value="W" required>
+									<label class="checkbox" for="MC_EDIT_Day_Wed">
+										W
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Thu" name="thursday" value="Th" required>
+									<label class="checkbox" for="MC_EDIT_Day_Thu">
+										TH
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Fri" name="friday" value="F" required>
+									<label class="checkbox" for="MC_EDIT_Day_Fri">
+										F
+									</label>
+								</div>
+								<div class="form-group col-md-1">
+									<input type="checkbox" class="form-check-input" id="MC_EDIT_Day_Sat" name="saturday" value="Sa" required>
+									<label class="checkbox" for="MC_EDIT_Day_Sat">
+										SA
+									</label>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_EditMenuCategory_btnSaveChanges" data-toggle="modal" data-target="#MGMT_EditMenuCategory">Submit</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_EditMenuCategory">Exit without Saving</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End ADD MENU Page -->
+
+	<!-- Begin ADD MENU PAGE -->
+	<div id="MGMT_AddMenuItem" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Menu Item</h5>
+				</div>
+				<div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" href="#MGMT_AddMenuItem_Main" role="tab" data-toggle="tab" aria-controls="category" aria-selected="true">Item</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#MGMT_AddMenuItem_Health" role="tab" data-toggle="tab" aria-controls="items" aria-selected="false">Health</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#MGMT_AddMenuItem_Customization" role="tab" data-toggle="tab" aria-controls="items" aria-selected="false">Customization</a>
+						</li>									
+					</ul>
+				</div>
+				<div class="modal-body">
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane fade show active" id="MGMT_AddMenuItem_Main" aria-labelledby="category-tab">
+							<div class="container">
+								<form id="addMenuItem">
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="text" class="form-control" id="MI_name" name="name" placeholder="Name" required>
+										</div>
+										<div class="input-group col">
+											<div class="input-group-prepend">
+												<span class="input-group-text">$</span>
+											</div>
+											<input type="number" class="form-control" id="MI_cost" name="cost" placeholder="Cost" min=0 step="0.01" aria-label="Cost of the Menu Item" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="input-group col">
+											<textarea class="form-control" id="MI_desc" name="description" placeholder="Add a description here..." rows="5"></textarea>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="text" class="form-control" id="imageURL" name="image" placeholder="Image URL" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="loyalityEx" name="loyalty_exclusive" value="True">
+											<label class="form-check-label" for="loyalityEx">
+												Loyality Exclusive?
+											</label>
+										</div>
+									</div>
+								</form>
+							</div>
+							<table id="MGMT_MenuItem_InventoryTable" class="table table-bordered table-striped"> <!-- This needs to be pulled manually in JS -->
+								<thead>
+									<tr>
+										<th width="5px">Name</th>
+										<th width="3px">Qty</th>
+									</tr>
+								</thead>
+								<tbody id="MGMT_MenuItem_InventoryTable_Body">
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="MGMT_AddMenuItem_Health" aria-labelledby="menuitem-tab">
+							<div class="container">
+								<form id="addMenuItem_Health">
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="number" class="form-control" id="MI_calories" name="calories" placeholder="Calories" min=0 aria-label="Calories" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										Allergens								
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_wheat" name="wheat" value="wheat">
+											<label class="form-check-label" for="MI_wheat">
+												Wheat
+											</label>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_peanut" name="peanut" value="peanut">
+											<label class="form-check-label" for="MI_peanut">
+												Peanut
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_egg" name="egg" value="egg">
+											<label class="form-check-label" for="MI_egg">
+												Egg
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_soy" name="soy" value="soy">
+											<label class="form-check-label" for="MI_soy">
+												Soy
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_milk" name="milk" value="milk">
+											<label class="form-check-label" for="MI_milk">
+												Milk
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_fish" name="fish" value="fish">
+											<label class="form-check-label" for="MI_fish">
+												Fish
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_shellfish" name="shellfish" value="shellfish">
+											<label class="form-check-label" for="MI_shellfish">
+												Shellfish
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_treenut" name="treenut" value="treenut">
+											<label class="form-check-label" for="MI_shellfish">
+												Treenut
+											</label>
+										</div>
+									</div>	
+								</form>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="MGMT_AddMenuItem_Customization" aria-labelledby="menuitem-tab">
+							<div class="container">
+								<form id="addMenuItem_Customization">
+									<p> Coming Soon! </p>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#MGMT_AddMenuItem_IngredientSelector">Add Ingredients</button>
+                    <button class="btn btn-primary" id="MGMT_AddMenuItem_btnSaveChanges" data-toggle="modal" data-target="#MGMT_AddMenuItem">Submit</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_AddMenuItem">Exit without Saving</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End ADD MENU Page -->
+	
+	<!-- Begin ADD MENU ITEM - INGREDIENT SELECTOR Page -->	
+	<div id="MGMT_AddMenuItem_IngredientSelector" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Menu Item</h5>
+				</div>
+				<div class="modal-body">
+					<table id="MGMT_AddMenuItem_IngredientSelector_InventoryTable" class="table table-bordered table-striped"> <!-- This needs to be pulled manually in JS -->
+						<thead>
+							<tr>
+								<th width="5px">Name</th>
+								<th width="3px">Qty</th>
+							</tr>
+						</thead>
+						<tbody id="MGMT_AddMenuItem_IngredientSelector_InventoryTable_Body">
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_AddMenuItem_IS_btnSaveChanges" data-toggle="modal" data-target="#MGMT_AddMenuItem_IngredientSelector">Save</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_AddMenuItem_IngredientSelector">Discard</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End ADD MENU ITEM - INGREDIENT SELECTOR Page -->	
+
+	<!-- Begin EDIT MENU PAGE -->
+	<div id="MGMT_EditMenuItem" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Menu Item</h5>
+				</div>
+				<div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" href="#MGMT_EditMenuItem_Main" role="tab" data-toggle="tab" aria-controls="category" aria-selected="true">Item</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#MGMT_EditMenuItem_Health" role="tab" data-toggle="tab" aria-controls="items" aria-selected="false">Health</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#MGMT_EditMenuItem_Customization" role="tab" data-toggle="tab" aria-controls="items" aria-selected="false">Customization</a>
+						</li>									
+					</ul>
+				</div>
+				<div class="modal-body">
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane fade show active" id="MGMT_EditMenuItem_Main" aria-labelledby="category-tab">
+							<div class="container">
+								<form id="EditMenuItemForm">
+									<input type="hidden" id="miID" name="uid">
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="text" class="form-control" id="MI_name" name="name" placeholder="Name" required>
+										</div>
+										<div class="input-group col">
+											<div class="input-group-prepend">
+												<span class="input-group-text">$</span>
+											</div>
+											<input type="number" class="form-control" id="MI_cost" name="cost" placeholder="Cost" min=0 step="0.01" aria-label="Cost of the Menu Item" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="input-group col">
+											<textarea class="form-control" id="MI_desc" name="description" placeholder="Add a description here..." rows="5"></textarea>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="text" class="form-control" id="imageURL" name="image" placeholder="Image URL" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="loyalityEx" name="loyalty_exclusive" value="True">
+											<label class="form-check-label" for="loyalityEx">
+												Loyality Exclusive?
+											</label>
+										</div>
+									</div>
+								</form>
+							</div>
+							<table id="MGMT_EditMenuItem_InventoryTable" class="table table-bordered table-striped"> <!-- This needs to be pulled manually in JS -->
+								<thead>
+									<tr>
+										<th width="5px">Name</th>
+										<th width="3px">Qty</th>
+									</tr>
+								</thead>
+								<tbody id="MGMT_EditMenuItem_InventoryTable_Body">
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="MGMT_EditMenuItem_Health" aria-labelledby="menuitem-tab">
+							<div class="container">
+								<form id="editMenuItem_Health">
+									<div class="form-group row">
+										<div class="input-group col">
+											<input type="number" class="form-control" id="MI_calories" name="calories" placeholder="Calories" min=0 aria-label="Calories" required>
+										</div>
+									</div>
+									<div class="form-group row">
+										Allergens								
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_wheat" name="wheat" value="wheat">
+											<label class="form-check-label" for="MI_wheat">
+												Wheat
+											</label>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_peanut" name="peanut" value="peanut">
+											<label class="form-check-label" for="MI_peanut">
+												Peanut
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_egg" name="egg" value="egg">
+											<label class="form-check-label" for="MI_egg">
+												Egg
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_soy" name="soy" value="soy">
+											<label class="form-check-label" for="MI_soy">
+												Soy
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_milk" name="milk" value="milk">
+											<label class="form-check-label" for="MI_milk">
+												Milk
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_fish" name="fish" value="fish">
+											<label class="form-check-label" for="MI_fish">
+												Fish
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_shellfish" name="shellfish" value="shellfish">
+											<label class="form-check-label" for="MI_shellfish">
+												Shellfish
+											</label>
+										</div>
+									</div>	
+									<div class="form-group row">
+										<div class="form-check">
+											<input type="checkbox" id="MI_treenut" name="treenut" value="treenut">
+											<label class="form-check-label" for="MI_shellfish">
+												Treenut
+											</label>
+										</div>
+									</div>	
+								</form>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="MGMT_EditMenuItem_Customization" aria-labelledby="menuitem-tab">			
+							<div class="container">
+								<form id="editMenuItem_Customization">
+									<p> Coming Soon! </p>
+								</form>
+							</div>
+						</div>							
+					</div>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#MGMT_EditMenuItem_IngredientSelector">Add Ingredients</button>
+                    <button class="btn btn-primary" id="MGMT_EditMenuItem_btnSaveChanges" data-toggle="modal" data-target="#MGMT_EditMenuItem">Submit</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_EditMenuItem">Exit without Saving</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End EDIT MENU Page -->
+
+	<!-- Begin EDIT MENU ITEM - INGREDIENT SELECTOR Page -->		
+	<div id="MGMT_EditMenuItem_IngredientSelector" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Menu Item</h5>
+				</div>
+				<div class="modal-body">
+					<table id="MGMT_EditMenuItem_IngredientSelector_InventoryTable" class="table table-bordered table-striped"> <!-- This needs to be pulled manually in JS -->
+						<thead>
+							<tr>
+								<th width="5px">Name</th>
+								<th width="3px">Qty</th>
+							</tr>
+						</thead>
+						<tbody id="MGMT_EditMenuItem_IngredientSelector_InventoryTable_Body">
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_EditMenuItem_IS_btnSaveChanges" data-toggle="modal" data-target="#MGMT_EditMenuItem_IngredientSelector">Save</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_EditMenuItem_IngredientSelector">Discard</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End EDIT MENU ITEM - INGREDIENT SELECTOR Page -->	
+		
+	<div id="MGMT_Kitchen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">TEMP MENU</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Coupons and Specials-->
+	
+		<div id="MGMT_Tables" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Reports</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0">
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" data-toggle="tab" href="#Coupons">Coupons</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" data-toggle="tab" href="#Specials">Specials</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" data-toggle="tab" href="#CouponTable">Current Coupons</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" data-toggle="tab" href="#SpecialTable">Current Specials</a>
+							</li>
+						</ul>
+					</div>
+					<br>
+					<div class="modal-body">
+						<div class="container-fluid">
+							<div class="tab-content">
+								<div class="tab-pane container active" id="Coupons">
+									<form class="form-signin" id="cForm">
+										<div class="form-group">
+											<label for="entry_code">Entry Code</label>
+											<input type="text" class="form-control" id="entry_code" name="entry_code" placeholder="Coupon Code" required>
+										</div>
+										<div class="form-row">
+										  <div class="form-group">
+											  <label for="percent_discount">Percent Discount</label>
+											  <input type="number" class="form-control" id="percent_discount" name="percent_discount" placeholder="%">
+										  </div>
+										  <div class="form-group">
+											  <label for="constant_discount">Constant Discount</label>
+											  <input type="number" class="form-control" id="constant_discount" name="constant_discount" placeholder="$">
+										  </div>
+										 </div>
+										<div class="form-group">
+											<label for="empComp">Employee Function</label>
+											<select id="empComp" name="employee_comped" class="form-control">
+												<option id="False">False</option>
+												<option id="True">True</option>
+											</select>
+										</div>
+									  <button type="button" id="couponSubmit" class="btn btn-primary">Add Coupon</button>
+									</form>
+								</div>
+								<div class="tab-pane container fade" id="Specials">
+									<form class="form-signin" id="sForm">
+										<div class="form-group">
+											<label for="specific_discounts_spec">Specific Discounts</label>
+											<input type="text" class="form-control" id="specific_discounts_spec" placeholder="Discount Item" required>
+										</div>
+										<div class="form-row">
+										  <div class="form-group">
+											<label for="percent_discount_spec">Percent Discount</label>
+											<input type="number" class="form-control" id="percent_discount_spec" placeholder="%">
+										  </div>
+										  <div class="form-group">
+											<label for="constant_discount_spec">Constant Discount</label>
+											<input type="number" class="form-control" id="constant_discount_spec" placeholder="$">
+										  </div>
+										 </div>
+										 <div class="form-row">
+											  <div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="M">
+												<label class="form-check-label" for="M">Monday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="Tu">
+												<label class="form-check-label" for="Tu">Tuesday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="W">
+												<label class="form-check-label" for="W">Wednesday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="Th">
+												<label class="form-check-label" for="Th">Thursday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="F">
+												<label class="form-check-label" for="F">Friday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="Sa">
+												<label class="form-check-label" for="Sa">Saturday</label>
+											</div>
+											<div class="form-check mb-1 mr-sm-1">
+												<input class="form-check-input" type="checkbox" id="Su">
+												<label class="form-check-label" for="Su">Sunday</label>
+											</div>
+										</div>
+										<button type="submit" id="specialSubmit" class="btn btn-primary">Add Special</button>
+									</form>
+								</div>
+								<div class="tab-pane container fade" id="CouponTable">
+									<table class="table table-bordered table-striped table-responsive" id="KTCH_CouponTable">
+										<thead>
+											<tr>
+												<th>Entry Code</th>
+												<th>Specific item discounts<br />( Item , Percent Discount (%) or Constant Discount (-) )</th>
+												<th>Percent Discount</th>
+												<th>Constant Discount</th>
+												<th>Edit</th>
+											</tr>
+										</thead>
+										<tbody id="KTCH_CouponTable_Body">
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane container fade" id="SpecialTable">
+									<table class="table table-bordered table-striped table-responsive" id="KTCH_SpecialTable">
+										<thead>
+											<tr>
+												<th>Specific item discounts<br />( Item , Percent Discount (%) or Constant Discount (-) )</th>
+												<th>Percent Discount</th>
+												<th>Constant Discount</th>
+												<th>Days</th>
+												<th>Edit</th>
+											</tr>
+										</thead>
+										<tbody id="KTCH_SpecialTable_Body">
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<!-- End Coupons and Specials-->
+
+	<!-- Begin INVENTORY PAGE -->
+	<div id="MGMT_Inventory" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1049">
+		<div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Inventory</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-header">
+					<input class="form-control" id="MGMT_Inventory_Search" type="text" placeholder="Search..">
+				</div>
+				<div class="modal-body">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+							<th width="5px">Name</th>
+							<th width="3px">Qty</th>
+							<th>Edit</th>
+							</tr>
+						</thead>
+						<tbody id="InventoryTable">
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" id="MGMT_Inventory_btnAddIngredient" data-toggle="modal" href="#MGMT_AddIngredient">Add Ingredient</a>
+					<button type="button" class="btn btn-secondary" id="MGMT_Inventory_btnSaveChanges" data-toggle="modal" data-target="#MGMT_Inventory">Save and Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End INVENTORY PAGE -->
+
+	<!-- Begin ADD INGREDIENTS PAGE -->
+	<div id="MGMT_AddIngredient" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1054">>
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Ingredient</h5>
+				</div>
+				<div class="modal-body">
+					<div class="Acontainer">
+						<form id="addIngredient">
+							<div class="form-row">
+								<div class="form-group">
+									<input type="text" class="form-control" id="ingredientNameField" name="name" placeholder="Ingredient Name" value="" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" id="ingredientAllergenField" name="allergen" value="false">
+								  <label class="form-check-label" for="ingredientAllergenField">
+									Allergen?
+								  </label>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_AddIngredient_btnSaveChanges" data-toggle="modal" data-target="#MGMT_AddIngredient">Create</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_AddIngredient">Exit without Saving</button>
+                </div>
+			</div>
+		</div>
+	</div>
+	<!-- End ADD INGREDIENTS PAGE -->
+
+	<!-- Begin EDIT INGREDIENTS PAGE -->
+	<div id="MGMT_EditIngredient" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index:1054">>
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Modify Ingredient Information</h5>
+				</div>
+				<div class="modal-body">
+					<div class="Acontainer">
+						<form id="editIngredientForm">
+							<input type="hidden" id="ingID" name="uid">
+							<div class="form-row">
+								<div class="form-group">
+									<input type="text" class="form-control" id="ingredientNameField" name="name" placeholder="Ingredient Name" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" id="ingredientAllergenField" name="allergen" required>
+								  <label class="form-check-label" for="ingredientAllergenField">
+									Allergen?
+								  </label>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="MGMT_EditIngredient_btnSaveChanges" data-toggle="modal" data-target="#MGMT_EditIngredient">Save Changes</button>
+                    <button class="btn btn-danger active" data-toggle="modal" data-target="#MGMT_EditIngredient">Exit without Saving</button>
+                </div>
+			</div>
+		</div>
+	</div>
+	<!-- End EDIT INGREDIENTS Page -->
+
+	<div id="Logout" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Logout</h5><button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="container">
+						<div class="row justify-content-center">
+							<div class="col">
+								<p class="text-center">Are you sure you want to log out?</p>
+							</div>
+						</div>
+					</div>
+				</div>
+                <div class="modal-footer">
+					<a href="" data-dismiss="modal" onclick=recordOut(); > <button class="btn btn-lg btn-danger mr-auto text-uppercase" data-dismiss="modal" id="signOut">Yes</button> </a>
+						<button class="btn btn-lg btn-primary text-uppercase" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+		<!-- Bootstrap core JavaScript -->
+		<script src="{{ url_for('static', filename='bootstrap/jquery/jquery.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='bootstrap/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+		<!-- Here because javascript suxs -->
+		<script src="{{ url_for('static', filename='javascript/kitchen.js') }}"></script>
+		<script src="{{ url_for('static', filename='javascript/management.js') }}"></script>
+		<script src="{{ url_for('static', filename='javascript/management_redirect.js') }}"> </script>
+</body>
+</html>
